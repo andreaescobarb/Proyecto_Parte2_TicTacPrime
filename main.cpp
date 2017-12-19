@@ -55,6 +55,9 @@ int compY(int**, int, int, int);
 void wFile(vector<Player*>);//prototipo de funcion que escribe el archivo
 vector<Player*> readFile(); //y esta funcion la lee y me retorna un vector del mismo tipo
 
+void Facil(int**, int);
+void Medio(int**, int);
+
 
 int main(int argc, char const *argv[]) {
   vector<Player*> players=readFile();
@@ -87,8 +90,8 @@ int main(int argc, char const *argv[]) {
               string p1, p2;
               int s1, s2;
               break;
-              if (player.size()==1) {
-                cout<<"Jugador 1: "<<player.at(0)<<endl<<endl;
+              if (players.size()==1) {
+                cout<<"Jugador 1: "<<players.at(0)<<endl<<endl;
                 cout<<"Ingrese nombre de nuevo jugador"<<endl;
                 cin>>p1;
                 players.push_back(new Player(p1, 0));
@@ -103,6 +106,7 @@ int main(int argc, char const *argv[]) {
         }
 
         while (game) {
+          string p1, p2;
           bool turno1=true;
           bool turno2=false;
           int number;
@@ -402,6 +406,66 @@ int main(int argc, char const *argv[]) {
       break;
       }
       case 5:{
+        bool game = true;
+        unique_ptr<Tictac> mat(new Tictac(3));
+        mat->setMat(createMatrix(3));
+        string p1=Player1();
+        while (game) {
+          bool turno1=true;
+          bool turno2=false;
+          int number;
+          int posx;
+          int posy;
+          while (turno1) {
+            cout<<"Turno de Jugador 1:"<<p1<<endl;
+            cout<<"_______________________________________"<<endl<<endl;
+            printMatrix(mat->getMat(), 3);
+            posx=posX(3);
+            posy=posY(3);
+            while (!position(mat->getMat(), posx, posy, 2)) {
+              cout<<"Posicion invalida, intente de nuevo"<<endl;
+              cout<<endl;
+              posx=posX(3);
+              posy=posY(3);
+            }
+            number=numeros();
+            mat->getMat()[posx][posy] = number;
+
+            if (VerifyHorizontal1(mat->getMat(), posx, posy, 3)||VerifyVertical1(mat->getMat(), posx, posy, 3)||VerifyDiagonal1(mat->getMat(), posx, posy, 3)||VerifyDiagonalC1(mat->getMat(), posx, posy, 3)) {
+              printMatrix(mat->getMat(), 3);
+              cout<<endl;
+              cout<<"Felicidades!! Acabas de ganar el juego: "<<p1<<endl;
+              cout<<endl;
+              game = false;
+              break;
+            }
+            if (lose(mat->getMat(), 3)) {
+              cout<<"Lo siento, ambos jugadores perdieron"<<endl;
+              game=false;
+              break;
+            }
+            turno1 = false;
+            turno2 = true;
+          }
+          while (turno2) {
+            cout<<"Turno de Jugador 2: "<<"MACHINE"<<endl;
+            cout<<"_______________________________________"<<endl<<endl;
+            printMatrix(mat->getMat(), 3);
+            Facil(mat->getMat(), 3);
+          /**  if (VerifyHorizontal1(mat->getMat(), posxi, posyi, 3)||VerifyVertical1(mat->getMat(), posxi, posyi, 3)||VerifyDiagonal1(mat->getMat(), posxi, posyi, 3)||VerifyDiagonalC1(mat->getMat(), posxi, posyi, 3)) {
+              printMatrix(mat->getMat(), 3);
+              cout<<endl;
+              cout<<"Felicidades!! Acabas de ganar el juego: "<<"MACHINE"<<endl;
+              cout<<endl;
+              game = false;
+              break;
+            }*/
+            turno2 = false;
+            turno1 = true;
+          }
+
+      }
+
 
         break;
       }
@@ -540,6 +604,22 @@ void Medio(int** mat, int size){
       }
     }
   }
+}
+
+bool lose(int** mat, int size){
+  bool l=false;
+  int cont=0;
+  for (int i = 0; i < size; i++) {
+    for (int j = 0; j < size; j++) {
+      if (mat[i][j]!=-1) {
+        cont++;
+      }
+    }
+  }
+  if (cont==size) {
+    l=true;
+  }
+  return l;
 }
 
 int menu(){
